@@ -3,20 +3,24 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Express' });
+    res.json({
+        version: 1.0,
+        title: 'API de Contrataciones'
+    });
 });
 
 router.post('/busqueda', (req, res) => {
     res.json({});
 });
 
-//Create (POST)
-//Read (GET)
+// Create (POST)
+
+// Read (GET)
 router.get('/contratacion/:id', (req, res) => {
     res.json({});
 });
 
-//Update (PUT)
-//Delete (DELETE)
+// Update (PUT)
+// Delete (DELETE)
 
 module.exports = router;
