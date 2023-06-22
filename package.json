@@ -1,5 +1,5 @@
 {
-  "name": "s6-api",
+  "name": "dpanel-server-s6",
   "version": "0.0.0",
   "private": true,
   "scripts": {
