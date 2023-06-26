@@ -26,12 +26,13 @@ router.post('/busqueda', (req, res) => {
 // Create (POST)
 
 // Read (GET)
-router.get('/contratacion/:id', async (req, res) => {
+router.get('/contratacion/:ocid', async (req, res) => {
+    const {ocid} = req.params; // e.g., ocds-07smqs-1775500
     await mongoose.connect('mongodb://127.0.0.1:27017/edca');
     const Release = mongoose.model('apf_releases', ReleaseSchema);
-    const Releases = await Release.findOne();
+    const Result = await Release.findOne({ocid: ocid});
     //console.log(Releases)
-    res.json(Releases);
+    res.json(Result);
 });
 
 // Update (PUT)
