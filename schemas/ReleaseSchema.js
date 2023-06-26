@@ -17,8 +17,8 @@ const ReleaseSchema = new mongoose.Schema(
                     additionalIdentifiers: [{
                             scheme: String,
                             id: String,
-                            legalName: string,
-                            uri: string
+                            legalName: String,
+                            uri: String
                     }],
                     address: {
                             streetAddress: String,
@@ -103,7 +103,7 @@ const ReleaseSchema = new mongoose.Schema(
                             }],
                             quantity: Number,
                             unit: {
-                                    scheme: string,
+                                    scheme: String,
                                     id: String,
                                     name: String,
                                     value: {
@@ -223,7 +223,7 @@ const ReleaseSchema = new mongoose.Schema(
                             }],
                             quantity: Number,
                             unit: {
-                                    scheme: string,
+                                    scheme: String,
                                     id: String,
                                     name: String,
                                     value: {
@@ -292,7 +292,7 @@ const ReleaseSchema = new mongoose.Schema(
                             }],
                             quantity: Number,
                             unit: {
-                                    scheme: string,
+                                    scheme: String,
                                     id: String,
                                     name: String,
                                     value: {
@@ -396,4 +396,4 @@ const ReleaseSchema = new mongoose.Schema(
     }
 );
 
-module.exports = {ReleaseModel: ReleaseSchema};
+module.exports = {ReleaseSchema};
