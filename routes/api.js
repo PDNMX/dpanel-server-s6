@@ -1,8 +1,7 @@
 var express = require('express');
 var router = express.Router();
-
 const _ = require('lodash');
-
+const {conn_uri, releases_collection} = require('../DbSettings');
 const mongoose = require('mongoose');
 const {ReleaseSchema} = require('../schemas/ReleaseSchema');
 
@@ -22,30 +21,33 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/busqueda', async (req, res) => {
-    await mongoose.connect('mongodb://127.0.0.1:27017/edca');
-    const Release = mongoose.model('apf_releases', ReleaseSchema);
+    await mongoose.connect(conn_uri);
+    const Release = mongoose.model(releases_collection, ReleaseSchema);
     const {page, pageSize} = req.body;
     const _page_ = page > 0 ? page : 1;
     const _pageSize_ = pageSize > 0 && pageSize <= 200 ? pageSize: 10;
     const skip = ((_page_ - 1) * _pageSize_);
 
-    /** TODO sort => title, buyer.name => asc, desc
-     const {sort} = req.body;
+    /**
+     * TODO SORT OPTIONS
+     * title, buyer.name => asc, desc
+     * const {sort} = req.body;
      */
 
-    /*
-    Query Options:
-    ocid
-    title => tender.title, awards.title, contracts.title
-    buyerName => buyer.name, parties.name where roles contains "buyer"
-    procurementMethod: [open, direct, selective, other]
-    awardStatus => awards.status: [active, pending, cancelled, unsuccessful]
-    supplierName => awards.suppliers.name, parties.name where roles contains "tenderer"
-    tenderStartDate => tender.tenderPeriod.startDate
-    tenderEndDate => tender.tenderPeriod.endDate
-    itemDescription => awards.items.description, tender.items.description
-    numberOfTenderers => tender.numberOfTenderers
-    */
+    /**
+     * QUERY OPTIONS
+     * ocid
+     * title => tender.title, awards.title, contracts.title
+     * buyerName => buyer.name, parties.name where roles contains "buyer"
+     * procurementMethod: [open, direct, selective, other]
+     * awardStatus => awards.status: [active, pending, cancelled, unsuccessful]
+     * supplierName => awards.suppliers.name, parties.name where roles contains "tenderer"
+     * tenderStartDate => tender.tenderPeriod.startDate
+     * tenderEndDate => tender.tenderPeriod.endDate
+     * itemDescription => awards.items.description, tender.items.description
+     * numberOfTenderers => tender.numberOfTenderers
+     **/
+
     const {
         ocid, title, buyerName, procurementMethod, awardStatus, supplierName,
         tenderStartDate, tenderEndDate, itemDescription, numberOfTenderers
@@ -194,6 +196,7 @@ router.post('/busqueda', async (req, res) => {
         }
     }
 
+    //console.log(JSON.stringify(_query_));
     const totalRows = await Release.countDocuments(_query_);
     const results = await Release.find(_query_).limit(_pageSize_).skip(skip);
 
@@ -211,8 +214,8 @@ router.post('/busqueda', async (req, res) => {
 // Read (GET)
 router.get('/contratacion/:ocid', async (req, res) => {
     const {ocid} = req.params; // e.g., ocds-07smqs-1775500
-    await mongoose.connect('mongodb://127.0.0.1:27017/edca');
-    const Release = mongoose.model('apf_releases', ReleaseSchema);
+    await mongoose.connect(conn_uri);
+    const Release = mongoose.model(releases_collection, ReleaseSchema);
     const Result = await Release.findOne({ocid: ocid});
     //console.log(Releases)
     res.json(Result);
