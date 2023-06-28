@@ -41,22 +41,14 @@ router.post('/busqueda', async (req, res) => {
     procurementMethod: [open, direct, selective, other]
     awardStatus => awards.status: [active, pending, cancelled, unsuccessful]
     supplierName => awards.suppliers.name, parties.name where roles contains "tenderer"
-    tenderStartDate => tender.startDate
-    tenderEndDate => tender.endDate
-    itemDescription => awards.items.description
+    tenderStartDate => tender.tenderPeriod.startDate
+    tenderEndDate => tender.tenderPeriod.endDate
+    itemDescription => awards.items.description, tender.items.description
     numberOfTenderers => tender.numberOfTenderers
     */
     const {
-        ocid,
-        title,
-        buyerName,
-        procurementMethod,
-        awardStatus,
-        supplierName,
-        //tenderStartDate,
-        //tenderEndDate,
-        itemDescription,
-        numberOfTenderers
+        ocid, title, buyerName, procurementMethod, awardStatus, supplierName,
+        tenderStartDate, tenderEndDate, itemDescription, numberOfTenderers
     } = req.body.query || {};
 
     let _query_ = {};
@@ -158,6 +150,26 @@ router.post('/busqueda', async (req, res) => {
             _query_.$and.push(supplierName_or);
         } else {
             _query_.$and = [ supplierName_or ];
+        }
+    }
+
+    if (tenderStartDate && tenderStartDate !== ""){
+        if (_.has(_query_,"$and")){
+            _query_.$and.push({
+                "tender.tenderPeriod.startDate": { $gte: tenderStartDate }
+            });
+        } else {
+            _query_.$and = [ {"tender.tenderPeriod.startDate": { $gte: tenderStartDate }} ];
+        }
+    }
+
+    if (tenderEndDate && tenderEndDate !== ""){
+        if (_.has(_query_,"$and")){
+            _query_.$and.push({
+                "tender.tenderPeriod.endDate": { $gte: tenderStartDate }
+            });
+        } else {
+            _query_.$and = [ {"tender.tenderPeriod.endDate": { $gte: tenderStartDate }} ];
         }
     }
 
