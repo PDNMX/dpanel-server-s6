@@ -29,12 +29,6 @@ router.post('/busqueda', async (req, res) => {
     const skip = ((_page_ - 1) * _pageSize_);
 
     /**
-     * TODO SORT OPTIONS
-     * title, buyer.name => asc, desc
-     * const {sort} = req.body;
-     */
-
-    /**
      * QUERY OPTIONS
      * ocid
      * title => tender.title, awards.title, contracts.title
@@ -196,9 +190,31 @@ router.post('/busqueda', async (req, res) => {
         }
     }
 
+    /**
+     * SORT OPTIONS
+     * title, buyer.name => asc, desc
+     */
+    const {sort} = req.body;
+
     //console.log(JSON.stringify(_query_));
     const totalRows = await Release.countDocuments(_query_);
-    const results = await Release.find(_query_).limit(_pageSize_).skip(skip);
+    let results;
+
+    if (sort && typeof sort !== 'undefined' && ( _.has(sort, "title") || _.has(sort, "buyerName") )){
+        let _sort_ = {};
+
+        if (_.has(sort, "title") ){
+            sort.title.toLowerCase() === "desc" ? _sort_.title = -1 : 1;
+        }
+
+        if (_.has(sort, "buyerName")){
+            sort.buyerName.toLowerCase() === "desc" ? _sort_.title = -1 : 1;
+        }
+
+        results = await Release.find(_query_).sort(_sort_).limit(_pageSize_).skip(skip);
+    } else {
+        results = await Release.find(_query_).limit(_pageSize_).skip(skip);
+    }
 
     res.json({
         pagination: {
