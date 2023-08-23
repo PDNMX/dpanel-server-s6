@@ -5,6 +5,26 @@ const {conn_uri, releases_collection} = require('../DbSettings');
 const mongoose = require('mongoose');
 const {ReleaseSchema} = require('../schemas/ReleaseSchema');
 
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
+const verifyUserToken = (req, res, next) => {
+    if (!req.headers.authorization) {
+        return res.status(401).send("Unauthorized request");
+    }
+    const token = req.headers["authorization"].split(" ")[1];
+    if (!token) {
+        return res.status(401).send("Access denied. No token provided.");
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded.user;
+        next();
+    } catch (err) {
+        res.status(400).send("Invalid token.");
+    }
+};
+
 /*
 const main = async () => {
     await mongoose.connect('mongodb://127.0.0.1:27017/edca');
