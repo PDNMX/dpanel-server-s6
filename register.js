@@ -1,6 +1,7 @@
 /**
  * Script para administrar usuarios
  */
+const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv").config();
 const {conn_uri, users_collection} = require('./DbSettings');
 const mongoose = require('mongoose');
@@ -10,8 +11,11 @@ const register_user = async ({name, email, password}) => {
     await mongoose.connect(conn_uri);
     const User = mongoose.model(users_collection, UserSchema);
 
+    const hash = await bcrypt.hash(password, 10);
     const new_user = new User ({
-        name, email, password
+        name,
+        email,
+        password: hash
     });
 
     const result = await new_user.save();
