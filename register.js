@@ -6,6 +6,14 @@ const dotenv = require("dotenv").config();
 const {conn_uri, users_collection} = require('./DbSettings');
 const mongoose = require('mongoose');
 const {UserSchema} = require('./schemas/UserSchema');
+const {argv}  = require('node:process');
+const { program } = require('commander');
+
+program.requiredOption('-e, --email <email>', 'Debe especificar un email');
+program.requiredOption('-p, --password <Contraseña>', 'Debe especificar una constraseña');
+program.requiredOption('-n, --name <Nombre completo>', 'Debe especificar el nombre del usuario, por ejemplo, Juan Perez');
+
+program.parse()
 
 const register_user = async ({name, email, password}) => {
     await mongoose.connect(conn_uri);
@@ -23,13 +31,9 @@ const register_user = async ({name, email, password}) => {
     return result;
 }
 
-const test1 = {
-    name: "Test Name 1",
-    email: "Example email 1",
-    password: "Test pass"
-};
+const {name, email, password } = program.opts();
 
-register_user(test1).then( result => {
+register_user({name, email, password}).then( result => {
     console.log(result);
-})
+});
 
