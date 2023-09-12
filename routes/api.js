@@ -1,12 +1,20 @@
 var express = require('express');
 var router = express.Router();
 const _ = require('lodash');
-const {conn_uri, releases_collection} = require('../DbSettings');
+const {conn_uri, releases_collection, users_collection} = require('../DbSettings');
 const mongoose = require('mongoose');
 const {ReleaseSchema} = require('../schemas/ReleaseSchema');
+const {UserSchema} = require('../schemas/UserSchema');
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
+/*
+const main = async () => {
+    await mongoose.connect('mongodb://127.0.0.1:27017/edca');
+}
+main().catch(err => console.log(err));
+*/
 
 const verifyUserToken = (req, res, next) => {
     if (!req.headers.authorization) {
@@ -25,12 +33,28 @@ const verifyUserToken = (req, res, next) => {
     }
 };
 
-/*
-const main = async () => {
-    await mongoose.connect('mongodb://127.0.0.1:27017/edca');
-}
-main().catch(err => console.log(err));
-*/
+router.post('/token', async (req, res) => {
+    const user = req.body;
+    await mongoose.connect(conn_uri);
+    const User = mongoose.model(users_collection, UserSchema);
+    const foundUser = await User.findOne({email: user.email});
+    if (foundUser){
+
+        const isPasswordValid = await bcrypt.compare(user.password, foundUser.password);
+
+        if (!isPasswordValid){
+            //send error
+            res.status(400).json({})
+        } else {
+            const token = jwt.sign({ user }, process.env.JWT_SECRET, {expiresIn: '1h'});
+            res.json({ 
+                token
+            });
+        }
+    } else {
+        res.status(400).json({})
+    }
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -40,7 +64,7 @@ router.get('/', function(req, res, next) {
     });
 });
 
-router.post('/busqueda', async (req, res) => {
+router.post('/busqueda', verifyUserToken, async (req, res) => {
     await mongoose.connect(conn_uri);
     const Release = mongoose.model(releases_collection, ReleaseSchema);
     const {page, pageSize} = req.body;
@@ -248,7 +272,7 @@ router.post('/busqueda', async (req, res) => {
 
 // Create (POST)
 // Read (GET)
-router.get('/contratacion/:ocid', async (req, res) => {
+router.get('/contratacion/:ocid', verifyUserToken, async (req, res) => {
     const {ocid} = req.params; // e.g., ocds-07smqs-1775500
     await mongoose.connect(conn_uri);
     const Release = mongoose.model(releases_collection, ReleaseSchema);
