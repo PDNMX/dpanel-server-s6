@@ -1,8 +1,8 @@
 /**
  * Script para administrar usuarios
  */
-const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv").config();
+const bcrypt = require("bcryptjs");
 const {conn_uri, users_collection} = require('./DbSettings');
 const mongoose = require('mongoose');
 const {UserSchema} = require('./schemas/UserSchema');
@@ -13,7 +13,7 @@ program.requiredOption('-e, --email <email>', 'Debe especificar un email');
 program.requiredOption('-p, --password <Contraseña>', 'Debe especificar una constraseña');
 program.requiredOption('-n, --name <Nombre completo>', 'Debe especificar el nombre del usuario, por ejemplo, Juan Perez');
 
-program.parse()
+program.parse();
 
 const register_user = async ({name, email, password}) => {
     await mongoose.connect(conn_uri);

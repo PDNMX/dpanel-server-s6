@@ -44,15 +44,24 @@ router.post('/token', async (req, res) => {
 
         if (!isPasswordValid){
             //send error
-            res.status(400).json({})
+            res.status(400).json({
+                status: "error",
+                message: "Contraseña incorrecta"
+            });
+
         } else {
             const token = jwt.sign({ user }, process.env.JWT_SECRET, {expiresIn: '1h'});
-            res.json({ 
+            res.json({
+                status: "ok",
+                message: "Token generado exitosamente",
                 token
             });
         }
     } else {
-        res.status(400).json({})
+        res.status(400).json({
+            status: "Error",
+            message: "No se encontró al usuario en la base de datos"
+        });
     }
 });
 
