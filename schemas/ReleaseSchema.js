@@ -292,10 +292,23 @@ const ReleaseSchema = new mongoose.Schema(
                                     },
                                     uri: String,
                                     deliveryLocation: { //Extensión: Ubicación
-                                            
-
-
-
+                                            geometry: {
+                                                    type: String,
+                                                    coordinates: [ Number ]
+                                            },
+                                            gazetter:{
+                                                    scheme: String,
+                                                    identifiers: [ String ],
+                                                    description: String,
+                                                    uri: String
+                                            }
+                                    },
+                                    deliveryAddress: {
+                                            streetAddress: String,
+                                            locality: String,
+                                            region: String,
+                                            postalCode: String,
+                                            countryName: String
                                     }
                             }
                     }],
@@ -329,6 +342,18 @@ const ReleaseSchema = new mongoose.Schema(
                             durationInDays: Number
                     },
                     hasEnquiries: Boolean,
+                    clarificationMeetings: { // Extensión: Juntas de aclaraciones
+                            id: String,
+                            date: String,
+                            attendees: [{
+                                    name: String,
+                                    id: String
+                            }],
+                            officials: [{
+                                    name: String,
+                                    id: String
+                            }]
+                    },
                     eligibilityCriteria: String,
                     awardPeriod: {
                             startDate: String,
@@ -382,6 +407,7 @@ const ReleaseSchema = new mongoose.Schema(
                     id: String,
                     title: String,
                     description: String,
+                    rationale: String, // Extensión: Justificación de la adjudicación
                     status: String,
                     date: String,
                     value: {
@@ -459,7 +485,14 @@ const ReleaseSchema = new mongoose.Schema(
                     },
                     value: {
                             amount: Number,
-                            currency: String
+                            amountNet: Number, // Extensión: Impuestos
+                            currency: String,
+                            exchangeRates: [{
+                                    rate: Number,
+                                    currency: String,
+                                    date: String,
+                                    source: String
+                            }]
                     },
                     items: [{
                             id: String,
@@ -485,10 +518,50 @@ const ReleaseSchema = new mongoose.Schema(
                                             amount: Number,
                                             currency: String
                                     },
-                                    uri: String
+                                    uri: String,
+                                    deliveryLocation: { //Extensión: Ubicación
+                                            geometry: {
+                                                    type: String,
+                                                    coordinates: [ Number ]
+                                            },
+                                            gazetter:{
+                                                    scheme: String,
+                                                    identifiers: [ String ],
+                                                    description: String,
+                                                    uri: String
+                                            }
+                                    },
+                                    deliveryAddress: {
+                                            streetAddress: String,
+                                            locality: String,
+                                            region: String,
+                                            postalCode: String,
+                                            countryName: String
+                                    }
                             }
                     }],
                     dateSigned: String,
+                    surveillanceMechanisms: [String], // Extensión: Mecanismos de vigilancia
+                    guarantees: { //Extensión: Garantías
+                            id: String,
+                            type: String,
+                            date: String,
+                            obligations: String,
+                            value: {
+                                    amount: Number,
+                                    currency: String
+                            },
+                            guarantor: {
+                                    name: String,
+                                    id: String
+                            },
+                            period: {
+                                    startDate: String,
+                                    endDate: String,
+                                    maxExtentDate: String,
+                                    durationInDays: Number
+                            }
+                    },
                     documents: [{
                             id: String,
                             documentType: String,
@@ -501,10 +574,12 @@ const ReleaseSchema = new mongoose.Schema(
                             language: String
                     }],
                     implementation: {
+                            status: String, // Extensión: Estatus de la ejecución
                             transactions: [{
                                     id: String,
                                     source: String,
                                     date: String,
+                                    paymentMethod: String, // Extensión: Método de pago
                                     value: {
                                             amount: Number,
                                             currency: String
