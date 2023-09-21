@@ -1,13 +1,14 @@
 var express = require('express');
 var router = express.Router();
 const _ = require('lodash');
-const {conn_uri, releases_collection, users_collection} = require('../DbSettings');
+const {conn_uri, packages_collection, releases_collection, users_collection} = require('../DbSettings');
 const mongoose = require('mongoose');
 const {ReleaseSchema} = require('../schemas/ReleaseSchema');
 const {UserSchema} = require('../schemas/UserSchema');
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const {ReleasePackageSchema} = require("../schemas/ReleasePackageSchema");
 
 /*
 const main = async () => {
@@ -281,14 +282,44 @@ router.post('/busqueda', verifyUserToken, async (req, res) => {
 
 // Create (POST)
 // Read (GET)
-router.get('/contratacion/:ocid', verifyUserToken, async (req, res) => {
+router.get('/release/:ocid', verifyUserToken, async (req, res) => {
     const {ocid} = req.params; // e.g., ocds-07smqs-1775500
     await mongoose.connect(conn_uri);
     const Release = mongoose.model(releases_collection, ReleaseSchema);
     const Result = await Release.findOne({ocid: ocid});
-    //console.log(Releases)
-    res.json(Result);
+
+    if (Result){
+        res.json({
+            status: "ok",
+            releasePackage: Result
+        });
+    } else {
+        res.status(400).json({
+            status: "error",
+            message: "No se encontró el registro"
+        });
+    }
 });
+
+router.get('/releasepackage/:ocid', verifyUserToken, async (req, res) => {
+    const {ocid} = req.params;
+    await mongoose.connect(conn_uri);
+    const ReleasePackage = mongoose.model(packages_collection, ReleasePackageSchema);
+    const Result = await ReleasePackage.findOne({"releases.ocid": ocid});
+
+    if (Result){
+        res.json({
+            status: "ok",
+            releasePackage: Result
+        });
+    } else {
+        res.status(400).json({
+            status: "error",
+            message: "No se encontró el registro"
+        });
+    }
+});
+
 // Update (PUT)
 // Delete (DELETE)
 

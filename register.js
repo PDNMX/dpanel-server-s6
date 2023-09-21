@@ -6,7 +6,6 @@ const bcrypt = require("bcryptjs");
 const {conn_uri, users_collection} = require('./DbSettings');
 const mongoose = require('mongoose');
 const {UserSchema} = require('./schemas/UserSchema');
-const {argv}  = require('node:process');
 const { program } = require('commander');
 
 program.requiredOption('-e, --email <email>', 'Debe especificar un email');
@@ -31,9 +30,8 @@ const register_user = async ({name, email, password}) => {
     return result;
 }
 
-const {name, email, password } = program.opts();
+const { name, email, password } = program.opts();
 
 register_user({name, email, password}).then( result => {
     console.log(result);
 });
-

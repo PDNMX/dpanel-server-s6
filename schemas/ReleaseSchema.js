@@ -657,7 +657,7 @@ const ReleaseDefinition = {
 };
 
 const ReleaseSchema = new mongoose.Schema(
- ReleaseDefinition
+    ReleaseDefinition
 );
 
 module.exports = { ReleaseSchema, ReleaseDefinition };

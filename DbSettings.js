@@ -18,11 +18,13 @@ const client_options = {
 };
 
 const releases_collection = process.env.MONGODB_COLLECTION_RELEASES || 'apf_releases';
+const packages_collection = process.env.MONGODB_COLLECTION_PACKAGES || 'apf_packages';
 const users_collection = process.env.MONGODB_COLLECTION_USERS || 'users_collection';
 
 module.exports = {
     conn_uri,
     client_options,
+    packages_collection,
     releases_collection,
     users_collection
 };
