@@ -8,10 +8,16 @@ const ReleaseSchema = new mongoose.Schema(
             initiationType: String,
             parties: [{
                     name: String,
+                    id: String,
+                    position: String, //Extensión: Junta de aclaraciones
                     identifier: {
+                            legalPersonality: String, //Extensión: junta de aclaraciones
                             scheme: String,
                             id: String,
                             legalName: String,
+                            givenName: String, //Extensión: Desglose del nombre
+                            patronymicName: String, //Extensión: Desglose del nombre
+                            matronymicName: String, //Extensión: Desglose del nombre
                             uri: String
                     },
                     additionalIdentifiers: [{
@@ -28,14 +34,57 @@ const ReleaseSchema = new mongoose.Schema(
                             countryName: String
                     },
                     contactPoint: {
+                            type: String,
                             name: String,
+                            givenName: String, //Extensión: Desglose del nombre
+                            patronymicName: String, //Extensión: Desglose del nombre
+                            matronymicName: String, //Extensión: Desglose del nombre
                             email: String,
                             telephone: String,
                             faxNumber: String,
-                            url: String
+                            url: String,
+                            availableLanguage: [ String ] //Extensión: puntos de contacto adicionales
                     },
-                    roles: [ String ]
-                    //TODO: details...
+                    additionalContactPoints: [{ // Extensión: Puntos de contacto adicionales
+                            type: String, // Extensión: Tipo de punto de contacto
+                            name: String,
+                            givenName: String, //Extensión: Desglose del nombre
+                            patronymicName: String, //Extensión: Desglose del nombre
+                            matronymicName: String, //Extensión: Desglose del nombre
+                            email: String,
+                            telephone: String,
+                            faxNumber: String,
+                            url: String,
+                            availableLanguage: String
+                    }],
+                    roles: [ String ],
+                    memberOf: [{ // Extensión: Miembro de
+                            id: String,
+                            name: String
+                    }],
+                    beneficialOwners: [{ //Extensión: Beneficial Owners
+                            id: String,
+                            name: String,
+                            identifier: {
+                                    scheme: String,
+                                    id: String
+                            },
+                            nationality: String,
+                            address: {
+                                    streetAddress: String,
+                                    locality: String,
+                                    region: String,
+                                    postalCode: String,
+                                    countryName: String,
+                                    email: String,
+                                    faxNumber: String,
+                                    telephone: String,
+                                    details: {
+                                            listedOnRegulatedMarket: Boolean
+                                    }
+                            }
+
+                    }]
             }],
             buyer: {
                     name: String,
@@ -43,6 +92,107 @@ const ReleaseSchema = new mongoose.Schema(
             },
             planning: {
                     rationale: String,
+                    hasQuotes: String, //Extensión: Solicitud de cotizaciones
+                    requestingUnits: [{ //Extensión: Unidades de adquisiciones
+                            name: String,
+                            id: String,
+                    }],
+                    responsibleUnits: [{
+                            name: String,
+                            id: String,
+                    }],
+                    contractingUnits: [{
+                            id: String,
+                            name: String
+                    }],
+                    requestForQuotes: [{
+                            id: String,
+                            title: String,
+                            description: String,
+                            period: {
+                                    startDate: String,
+                                    endDate: String,
+                                    maxExtentDate: String,
+                                    durationInDays: Number //Integer
+                            },
+                            items: [{
+                                    id: String,
+                                    description: String,
+                                    classification: {
+                                            scheme: String,
+                                            id: String,
+                                            description: String,
+                                            uri: String
+                                    },
+                                    additionalClassifications: [{
+                                            scheme: String,
+                                            id: String,
+                                            description: String,
+                                            uri: String
+                                    }],
+                                    quantity: Number,
+                                    unit: {
+                                            scheme: String,
+                                            id: String,
+                                            name: String,
+                                            value: {
+                                                    currency: String,
+                                                    amount: Number
+                                            },
+                                            uri: String
+                                    }
+                            }],
+                            invitedSuppliers: [{
+                                    name: String,
+                                    id: String
+                            }],
+                            quotes: [{
+                                    id: String,
+                                    description: String,
+                                    date: String,
+                                    items: [{
+                                            id: String,
+                                            description: String,
+                                            classification: {
+                                                    scheme: String,
+                                                    id: String,
+                                                    description: String,
+                                                    uri: String
+                                            },
+                                            additionalClassifications: [{
+                                                    scheme: String,
+                                                    id: String,
+                                                    description: String,
+                                                    uri: String
+                                            }],
+                                            quantity: Number,
+                                            unit: {
+                                                    scheme: String,
+                                                    id: String,
+                                                    name: String,
+                                                    value: {
+                                                            currency: String,
+                                                            amount: Number
+                                                    },
+                                                    uri: String
+                                            }
+                                    }],
+                                    value: {
+                                            amount: Number,
+                                            currency: String
+                                    },
+                                    period: {
+                                            startDate: String,
+                                            endDate: String,
+                                            maxExtentDate: String,
+                                            durationInDays: Number // int
+                                    },
+                                    issuingSupplier: {
+                                            name: String,
+                                            id: String
+                                    }
+                            }]
+                    }],
                     budget: {
                             id: String,
                             description: String,
@@ -52,7 +202,36 @@ const ReleaseSchema = new mongoose.Schema(
                             },
                             project: String,
                             projectID: String,
-                            uri: String
+                            uri: String,
+                            budgetBreakdown: { // Extensión: Budget breakdown
+                                    id: String,
+                                    description: String,
+                                    value: {
+                                            amount: Number,
+                                            currency: String
+                                    },
+                                    uri: String,
+                                    period: {
+                                            startDate: String,
+                                            endDate: String,
+                                            maxExtentDate: String,
+                                            durationInDays: Number // int
+                                    },
+                                    budgetLines: [{
+                                            id: String,
+                                            origin: String,
+                                            components: [{
+                                                    name: String,
+                                                    level: String,
+                                                    code: String,
+                                                    description: String
+                                            }]
+                                    }],
+                                    sourceParty: {
+                                            name: String,
+                                            id: String
+                                    }
+                            }
                     },
                     documents: [{
                             id: String,
@@ -108,9 +287,16 @@ const ReleaseSchema = new mongoose.Schema(
                                     name: String,
                                     value: {
                                             amount: Number,
-                                            currency: String
+                                            amountNet:Number, //Extension: Impuestos
+                                            currency: String,
                                     },
-                                    uri: String
+                                    uri: String,
+                                    deliveryLocation: { //Extensión: Ubicación
+                                            
+
+
+
+                                    }
                             }
                     }],
                     value: {
