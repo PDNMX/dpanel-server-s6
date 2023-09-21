@@ -8,7 +8,7 @@ const ReleasePackageSchema = new mongoose.Schema({
     publishedDate: String,
     releases: [ ReleaseDefinition ],
     publisher: {
-        name,
+        name: String,
         scheme: String,
         uid: String,
         uri: String

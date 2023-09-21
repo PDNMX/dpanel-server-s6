@@ -660,4 +660,4 @@ const ReleaseSchema = new mongoose.Schema(
  ReleaseDefinition
 );
 
-module.exports = {ReleaseSchema, ReleaseDefinition};
+module.exports = { ReleaseSchema, ReleaseDefinition };
