@@ -51,7 +51,7 @@ router.post('/token', async (req, res) => {
             });
 
         } else {
-            const token = jwt.sign({ user }, process.env.JWT_SECRET, {expiresIn: '1h'});
+            const token = jwt.sign({ user }, process.env.JWT_SECRET, {expiresIn: process.env.JWT_TOKEN_EXPIRES_IN || '1h' });
             res.json({
                 status: "ok",
                 message: "Token generado exitosamente",
