@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-MAINTAINER Mergio Rodríguez <sergio.rdzsg@gmail.com>
+MAINTAINER André Lopez <alopezr@sesna.gob.mx>
 
 ADD . /dpanel_server_s6
 WORKDIR /dpanel_server_s6

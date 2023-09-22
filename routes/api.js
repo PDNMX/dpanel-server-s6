@@ -10,13 +10,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const {ReleasePackageSchema} = require("../schemas/ReleasePackageSchema");
 
-/*
-const main = async () => {
-    await mongoose.connect('mongodb://127.0.0.1:27017/edca');
-}
-main().catch(err => console.log(err));
-*/
-
 const verifyUserToken = (req, res, next) => {
     if (!req.headers.authorization) {
         return res.status(401).send("Unauthorized request");
